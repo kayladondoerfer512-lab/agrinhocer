@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agro Forte · Futuro Sustentável</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ===== RESET & TOKENS ===== */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;font-size:16px;}
+
+:root{
+  --ink:#0b1a0e;
+  --soil:#3d2b1f;
+  --leaf:#1d6b3b;
+  --leaf2:#2e9b57;
+  --moss:#4a7c3f;
+  --sun:#d4891a;
+  --sun2:#f0b429;
+  --sky:#c8dfe8;
+  --cream:#f2ede3;
+  --fog:#e8e2d6;
+  --white:#fafaf7;
+  --ff-display:'Fraunces',serif;
+  --ff-ui:'Syne',sans-serif;
+  --ease-out:cubic-bezier(.16,1,.3,1);
+  --fs:1;
+}
+
+body{
+  font-family:var(--ff-ui);
+  background:var(--cream);
+  color:var(--ink);
+  overflow-x:hidden;
+  cursor:none;
+}
+
+/* ===== CURSOR CUSTOM ===== */
+#cursor{
+  position:fixed;width:12px;height:12px;
+  background:var(--leaf2);border-radius:50%;
+  pointer-events:none;z-index:99999;
+  transform:translate(-50%,-50%);
+  transition:width .25s,height .25s,background .25s;
+  mix-blend-mode:multiply;
+}
+#cursor-ring{
+  position:fixed;width:40px;height:40px;
+  border:1.5px solid var(--leaf);border-radius:50%;
+  pointer-events:none;z-index:99998;
+  transform:translate(-50%,-50%);
+  transition:transform .08s,width .3s,height .3s,opacity .3s;
+  opacity:.5;
+}
+body:hover #cursor{opacity:1;}
+
+/* ===== ACESSIBILIDADE ===== */
+#acc-toggle{
+  position:fixed;bottom:32px;right:32px;z-index:9000;
+  width:56px;height:56px;
+  background:var(--leaf);color:#fff;
+  border:none;border-radius:50%;
+  font-size:22px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 24px rgba(29,107,59,.4);
+  transition:transform .3s,background .2s;
+}
+#acc-toggle:hover{transform:scale(1.12);background:var(--leaf2);}
+
+#acc-panel{
+  position:fixed;bottom:100px;right:32px;z-index:8999;
+  background:var(--ink);border-radius:20px;
+  padding:20px;width:230px;
+  box-shadow:0 20px 60px rgba(0,0,0,.3);
+  opacity:0;pointer-events:none;
+  transform:translateY(16px) scale(.96);
+  transition:all .3s var(--ease-out);
+}
+#acc-panel.open{opacity:1;pointer-events:all;transform:none;}
+#acc-panel h3{color:#fff;font-size:.8rem;letter-spacing:.15em;text-transform:uppercase;margin-bottom:14px;opacity:.5;}
+.acc-btn{
+  width:100%;display:flex;align-items:center;gap:12px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+  color:#fff;border-radius:10px;padding:10px 14px;
+  font-family:var(--ff-ui);font-size:.85rem;cursor:pointer;
+  margin-bottom:8px;transition:background .2s;text-align:left;
+}
+.acc-btn:hover{background:rgba(255,255,255,.14);}
+.acc-btn .icon{font-size:16px;width:22px;text-align:center;}
+
+/* Alto contraste */
+body.hc{filter:contrast(1.6) grayscale(.2);}
+body.hc *{border-color:currentColor !important;}
+
+/* Fonte maior */
+body.bigfont{font-size:calc(16px * 1.25 * var(--fs));}
+body.bigfont h1{font-size:clamp(3rem,9vw,8rem) !important;}
+
+/* Dislexia */
+body.dyslexia{font-family:'Arial',sans-serif !important;letter-spacing:.06em;word-spacing:.2em;line-height:1.9;}
+body.dyslexia *{font-family:'Arial',sans-serif !important;}
+
+/* Modo escuro */
+body.dark{
+  --ink:#e8e2d4;--cream:#0f1a0f;--fog:#172517;--white:#1d2b1e;
+  --sky:#1a2e38;
+}
+body.dark .nav{background:rgba(10,20,10,.96);}
+body.dark .foto-caption{background:rgba(0,0,0,.85);}
+
+/* Foco visível */
+*:focus-visible{outline:3px solid var(--sun);outline-offset:3px;border-radius:4px;}
+
+/* ===== PROGRESS BAR ===== */
+#prog{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--leaf2),var(--sun2));z-index:9999;width:0%;transition:width .1s;}
+
+/* ===== NAV ===== */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 6%;
+  transition:padding .4s,background .4s;
+}
+.nav.scrolled{
+  padding:14px 6%;
+  background:rgba(242,237,227,.92);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(29,107,59,.12);
+}
+.nav-logo{
+  font-family:var(--ff-display);font-weight:900;font-size:1.4rem;
+  color:var(--ink);text-decoration:none;
+  display:flex;align-items:center;gap:10px;
+}
+.nav-logo span{
+  width:32px;height:32px;background:var(--leaf);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+}
+.nav-links{display:flex;gap:32px;list-style:none;}
+.nav-links a{
+  font-size:.82rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink);text-decoration:none;opacity:.6;transition:opacity .2s;
+  position:relative;
+}
+.nav-links a::after{
+  content:'';position:absolute;bottom:-3px;left:0;right:0;height:2px;
+  background:var(--leaf2);transform:scaleX(0);transform-origin:left;
+  transition:transform .3s;
+}
+.nav-links a:hover{opacity:1;}
+.nav-links a:hover::after{transform:scaleX(1);}
+
+/* ===== HERO ===== */
+.hero{
+  min-height:100vh;position:relative;
+  display:grid;grid-template-columns:1fr 1fr;
+  align-items:center;overflow:hidden;
+}
+.hero-left{
+  padding:140px 0 100px 8%;
+  position:relative;z-index:2;
+}
+.hero-tag{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(29,107,59,.1);border:1px solid rgba(29,107,59,.25);
+  color:var(--leaf);font-size:.72rem;font-weight:700;letter-spacing:.2em;
+  text-transform:uppercase;padding:6px 16px;border-radius:100px;
+  margin-bottom:28px;
+  animation:slideIn .7s var(--ease-out) both;
+}
+.hero-tag .dot{width:6px;height:6px;background:var(--leaf2);border-radius:50%;animation:pulse 1.5s ease infinite;}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.5);opacity:.5;}}
+
+.hero h1{
+  font-family:var(--ff-display);font-weight:900;
+  font-size:clamp(3.2rem,5.5vw,6.5rem);
+  line-height:.97;
+  color:var(--ink);
+  margin-bottom:28px;
+  animation:slideIn .7s .15s var(--ease-out) both;
+}
+.hero h1 em{
+  font-style:italic;font-weight:300;color:var(--leaf);
+  display:block;
+}
+.hero h1 strong{color:var(--sun);}
+
+.hero-desc{
+  font-size:1.1rem;line-height:1.75;color:var(--ink);opacity:.65;
+  max-width:420px;margin-bottom:40px;
+  animation:slideIn .7s .3s var(--ease-out) both;
+}
+
+.hero-btns{
+  display:flex;gap:14px;flex-wrap:wrap;
+  animation:slideIn .7s .45s var(--ease-out) both;
+}
+.btn-main{
+  background:var(--leaf);color:#fff;
+  border:none;padding:15px 34px;border-radius:100px;
+  font-family:var(--ff-ui);font-size:.9rem;font-weight:700;
+  letter-spacing:.05em;cursor:pointer;text-decoration:none;
+  transition:all .3s;display:inline-flex;align-items:center;gap:8px;
+  box-shadow:0 6px 24px rgba(29,107,59,.35);
+}
+.btn-main:hover{background:var(--leaf2);transform:translateY(-3px);box-shadow:0 12px 32px rgba(29,107,59,.4);}
+.btn-ghost{
+  background:transparent;color:var(--ink);
+  border:1.5px solid rgba(11,26,14,.25);padding:15px 34px;border-radius:100px;
+  font-family:var(--ff-ui);font-size:.9rem;font-weight:700;cursor:pointer;text-decoration:none;
+  transition:all .3s;
+}
+.btn-ghost:hover{border-color:var(--leaf);color:var(--leaf);}
+
+.hero-right{
+  position:relative;height:100vh;overflow:hidden;
+}
+.hero-img-wrap{
+  position:absolute;inset:0;
+  clip-path:polygon(8% 0,100% 0,100% 100%,0 100%);
+}
+.hero-img-wrap img{
+  width:100%;height:100%;object-fit:cover;
+  transform:scale(1.06);
+  animation:zoomOut 18s ease-in-out infinite alternate;
+}
+@keyframes zoomOut{from{transform:scale(1.06);}to{transform:scale(1);}}
+.hero-img-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(11,26,14,.18) 0%,transparent 60%);
+}
+
+/* Floating stat card */
+.hero-stat{
+  position:absolute;bottom:80px;left:60px;
+  background:rgba(242,237,227,.95);
+  backdrop-filter:blur(20px);
+  border-radius:20px;padding:20px 28px;
+  border:1px solid rgba(29,107,59,.15);
+  animation:slideIn .7s .6s var(--ease-out) both;
+  box-shadow:0 20px 60px rgba(0,0,0,.12);
+  z-index:3;
+}
+.hero-stat .num{font-family:var(--ff-display);font-size:2.8rem;font-weight:900;color:var(--leaf);line-height:1;}
+.hero-stat .label{font-size:.75rem;font-weight:600;color:var(--ink);opacity:.6;text-transform:uppercase;letter-spacing:.1em;margin-top:4px;}
+
+/* Organic blob shape */
+.hero-blob{
+  position:absolute;top:10%;left:-5%;width:45%;
+  opacity:.06;pointer-events:none;z-index:0;
+  animation:blobMove 12s ease-in-out infinite;
+}
+@keyframes blobMove{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(30px,-20px) scale(1.05);}66%{transform:translate(-20px,30px) scale(.97);}}
+
+/* Grain overlay */
+.grain{
+  position:fixed;inset:0;pointer-events:none;z-index:9997;
+  opacity:.025;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size:200px;
+}
+
+@keyframes slideIn{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:none;}}
+
+/* ===== MARQUEE ===== */
+.marquee-wrap{
+  background:var(--leaf);overflow:hidden;
+  padding:16px 0;border-top:1px solid rgba(255,255,255,.1);
+}
+.marquee-track{
+  display:flex;gap:0;
+  animation:marquee 22s linear infinite;
+  width:max-content;
+}
+.marquee-track span{
+  color:rgba(255,255,255,.85);font-size:.78rem;font-weight:700;
+  letter-spacing:.2em;text-transform:uppercase;
+  padding:0 40px;white-space:nowrap;
+}
+.marquee-track span.dot-sep::after{content:'◆';margin-left:40px;opacity:.4;}
+@keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+/* ===== MANIFESTO ===== */
+.manifesto{
+  padding:120px 8%;
+  display:grid;grid-template-columns:1fr 2fr;gap:80px;
+  align-items:start;
+}
+.manifesto-label{
+  position:sticky;top:120px;
+}
+.manifesto-label span{
+  display:block;font-size:.72rem;font-weight:700;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--leaf);margin-bottom:12px;
+}
+.manifesto-label h2{
+  font-family:var(--ff-display);font-size:2.8rem;font-weight:900;
+  line-height:1.1;color:var(--ink);
+}
+.manifesto-content p{
+  font-size:1.35rem;line-height:1.75;color:var(--ink);opacity:.7;
+  margin-bottom:32px;
+}
+.manifesto-content p:first-child{
+  font-family:var(--ff-display);font-size:1.9rem;font-weight:700;
+  line-height:1.3;opacity:1;color:var(--ink);
+}
+.manifesto-content p strong{color:var(--leaf);}
+
+/* ===== COUNTERS ===== */
+.counters{
+  background:var(--ink);
+  display:grid;grid-template-columns:repeat(4,1fr);
+}
+.counter-item{
+  padding:64px 40px;text-align:center;
+  border-right:1px solid rgba(255,255,255,.07);
+  position:relative;overflow:hidden;
+}
+.counter-item:last-child{border-right:none;}
+.counter-item::before{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:0;
+  background:rgba(46,155,87,.12);transition:height .6s var(--ease-out);
+}
+.counter-item.is-vis::before{height:100%;}
+.counter-num{
+  font-family:var(--ff-display);font-weight:900;
+  font-size:3.8rem;line-height:1;color:#fff;
+  display:block;margin-bottom:8px;
+}
+.counter-unit{color:var(--leaf2);font-size:2rem;}
+.counter-label{font-size:.8rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.4);}
+
+/* ===== GALERIA ===== */
+.galeria{padding:120px 8%;}
+.galeria-header{
+  display:flex;justify-content:space-between;align-items:flex-end;
+  margin-bottom:64px;
+}
+.galeria-header h2{
+  font-family:var(--ff-display);font-weight:900;
+  font-size:clamp(2.2rem,4vw,4rem);line-height:1.05;color:var(--ink);
+}
+.galeria-header h2 em{font-style:italic;font-weight:300;color:var(--leaf);}
+.galeria-sub{font-size:.95rem;color:var(--ink);opacity:.5;max-width:280px;text-align:right;line-height:1.6;}
+
+/* Bento grid */
+.bento{
+  display:grid;
+  grid-template-columns:repeat(12,1fr);
+  grid-template-rows:auto;
+  gap:16px;
+}
+.bento-item{
+  border-radius:20px;overflow:hidden;position:relative;
+  cursor:pointer;group:true;
+}
+.bento-item:nth-child(1){grid-column:span 5;grid-row:span 2;}
+.bento-item:nth-child(2){grid-column:span 4;grid-row:span 1;}
+.bento-item:nth-child(3){grid-column:span 3;grid-row:span 1;}
+.bento-item:nth-child(4){grid-column:span 4;grid-row:span 2;}
+.bento-item:nth-child(5){grid-column:span 3;grid-row:span 1;}
+.bento-item:nth-child(6){grid-column:span 5;grid-row:span 1;}
+.bento-item:nth-child(7){grid-column:span 4;grid-row:span 1;}
+
+.bento-item img{
+  width:100%;height:100%;min-height:220px;object-fit:cover;
+  transition:transform .6s var(--ease-out);display:block;
+}
+.bento-item:hover img{transform:scale(1.07);}
+
+.bento-info{
+  position:absolute;inset:0;
+  background:linear-gradient(0deg,rgba(11,26,14,.85) 0%,rgba(11,26,14,.1) 55%,transparent 100%);
+  opacity:0;transition:opacity .4s;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:24px;
+}
+.bento-item:hover .bento-info{opacity:1;}
+.bento-info h4{color:#fff;font-size:1rem;font-weight:700;margin-bottom:6px;line-height:1.3;}
+.bento-fonte{
+  font-size:.72rem;color:rgba(255,255,255,.55);
+  display:flex;align-items:center;gap:6px;
+}
+.bento-fonte a{color:var(--sun2);text-decoration:none;}
+.bento-fonte a:hover{text-decoration:underline;}
+.bento-tag{
+  position:absolute;top:16px;left:16px;
+  background:rgba(242,237,227,.9);
+  color:var(--ink);font-size:.68rem;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;
+  padding:5px 12px;border-radius:100px;
+  backdrop-filter:blur(8px);
+}
+
+/* ===== LIGHTBOX ===== */
+#lb{
+  position:fixed;inset:0;z-index:9990;
+  background:rgba(11,26,14,.97);
+  display:none;
+  flex-direction:column;align-items:center;justify-content:center;
+  gap:20px;padding:40px;
+}
+#lb.on{display:flex;}
+#lb img{max-width:min(900px,90vw);max-height:72vh;border-radius:16px;object-fit:contain;}
+.lb-meta{text-align:center;}
+.lb-meta h4{color:#fff;font-family:var(--ff-display);font-size:1.4rem;font-weight:700;margin-bottom:6px;}
+.lb-meta p{color:rgba(255,255,255,.5);font-size:.85rem;}
+.lb-meta a{color:var(--sun2);}
+.lb-close{
+  position:absolute;top:24px;right:28px;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  color:#fff;border-radius:50%;width:44px;height:44px;font-size:20px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:background .2s;
+}
+.lb-close:hover{background:rgba(255,255,255,.2);}
+.lb-nav{
+  position:absolute;top:50%;transform:translateY(-50%);
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  color:#fff;border-radius:50%;width:52px;height:52px;font-size:22px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:background .2s;
+}
+.lb-nav:hover{background:rgba(255,255,255,.2);}
+#lb-prev{left:24px;}
+#lb-next{right:24px;}
+
+/* ===== PILARES ===== */
+.pilares{
+  padding:0 8% 120px;
+}
+.pilares-header{
+  text-align:center;margin-bottom:80px;
+}
+.pilares-header h2{
+  font-family:var(--ff-display);font-weight:900;
+  font-size:clamp(2rem,3.5vw,3.5rem);color:var(--ink);
+  margin-bottom:16px;
+}
+.pilares-header p{font-size:1.05rem;color:var(--ink);opacity:.55;max-width:540px;margin:0 auto;}
+
+.pilares-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:24px;
+}
+.pilar-card{
+  background:var(--white);border-radius:24px;padding:36px 32px;
+  border:1px solid rgba(11,26,14,.06);
+  transition:all .4s var(--ease-out);
+  position:relative;overflow:hidden;
+}
+.pilar-card::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(29,107,59,.04) 0%,transparent 60%);
+  opacity:0;transition:opacity .4s;
+}
+.pilar-card:hover{transform:translateY(-8px);box-shadow:0 24px 64px rgba(11,26,14,.1);border-color:rgba(29,107,59,.2);}
+.pilar-card:hover::after{opacity:1;}
+.pilar-icon{
+  width:56px;height:56px;border-radius:16px;
+  background:rgba(29,107,59,.1);
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;margin-bottom:24px;
+  transition:transform .4s var(--ease-out);
+}
+.pilar-card:hover .pilar-icon{transform:scale(1.15) rotate(-6deg);}
+.pilar-num{
+  font-family:var(--ff-display);font-size:4rem;font-weight:900;
+  color:var(--ink);opacity:.04;
+  position:absolute;top:20px;right:24px;line-height:1;
+}
+.pilar-card h3{
+  font-family:var(--ff-display);font-size:1.45rem;font-weight:700;
+  color:var(--ink);margin-bottom:12px;line-height:1.2;
+}
+.pilar-card p{font-size:.92rem;color:var(--ink);opacity:.6;line-height:1.7;}
+
+/* ===== TIMELINE ===== */
+.timeline-sec{
+  background:var(--fog);padding:120px 8%;
+  position:relative;overflow:hidden;
+}
+.timeline-sec::before{
+  content:'';position:absolute;
+  width:500px;height:500px;border-radius:50%;
+  background:rgba(29,107,59,.05);
+  right:-100px;top:-100px;pointer-events:none;
+}
+.timeline-sec h2{
+  font-family:var(--ff-display);font-weight:900;
+  font-size:clamp(2.2rem,4vw,4rem);color:var(--ink);
+  margin-bottom:72px;
+}
+.timeline-sec h2 em{font-style:italic;font-weight:300;color:var(--leaf);}
+
+.tl{position:relative;padding-left:60px;}
+.tl::before{
+  content:'';position:absolute;left:18px;top:8px;bottom:8px;width:2px;
+  background:linear-gradient(to bottom,var(--leaf2),rgba(46,155,87,.1));
+}
+.tl-item{
+  position:relative;margin-bottom:60px;
+  opacity:0;transform:translateX(-20px);
+  transition:all .7s var(--ease-out);
+}
+.tl-item.is-vis{opacity:1;transform:none;}
+.tl-item::before{
+  content:'';position:absolute;left:-46px;top:8px;
+  width:16px;height:16px;border-radius:50%;
+  background:var(--leaf2);border:3px solid var(--fog);
+  box-shadow:0 0 0 3px rgba(46,155,87,.3);
+}
+.tl-year{
+  font-family:var(--ff-display);font-weight:900;font-size:1.1rem;
+  color:var(--leaf);margin-bottom:8px;
+}
+.tl-item h4{font-size:1.15rem;font-weight:700;color:var(--ink);margin-bottom:8px;}
+.tl-item p{font-size:.92rem;color:var(--ink);opacity:.6;line-height:1.7;max-width:600px;}
+
+/* ===== CTA ===== */
+.cta{
+  padding:140px 8%;
+  background:var(--leaf);
+  position:relative;overflow:hidden;
+  text-align:center;
+}
+.cta::before,.cta::after{
+  content:'';position:absolute;border-radius:50%;pointer-events:none;
+}
+.cta::before{width:700px;height:700px;background:rgba(255,255,255,.04);top:-300px;left:-200px;}
+.cta::after{width:400px;height:400px;background:rgba(212,137,26,.15);bottom:-150px;right:-100px;}
+.cta-inner{position:relative;z-index:1;}
+.cta h2{
+  font-family:var(--ff-display);font-weight:900;font-style:italic;
+  font-size:clamp(2.5rem,6vw,6rem);color:#fff;
+  line-height:1;margin-bottom:24px;
+}
+.cta p{color:rgba(255,255,255,.7);font-size:1.15rem;max-width:500px;margin:0 auto 44px;line-height:1.7;}
+.btn-white{
+  background:#fff;color:var(--leaf);
+  border:none;padding:16px 40px;border-radius:100px;
+  font-family:var(--ff-ui);font-size:.95rem;font-weight:700;
+  cursor:pointer;text-decoration:none;display:inline-block;
+  transition:all .3s;box-shadow:0 6px 32px rgba(0,0,0,.15);
+}
+.btn-white:hover{transform:translateY(-4px);box-shadow:0 14px 40px rgba(0,0,0,.2);}
+
+/* ===== FOOTER ===== */
+footer{
+  background:var(--ink);
+  padding:72px 8% 36px;
+}
+.footer-top{
+  display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:60px;
+  margin-bottom:60px;
+  padding-bottom:60px;
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+.footer-brand .logo{
+  font-family:var(--ff-display);font-weight:900;font-size:1.5rem;
+  color:#fff;margin-bottom:16px;display:flex;align-items:center;gap:10px;
+}
+.footer-brand .logo span{width:32px;height:32px;background:var(--leaf2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.footer-brand p{font-size:.88rem;color:rgba(255,255,255,.4);line-height:1.7;max-width:260px;}
+footer h5{color:rgba(255,255,255,.35);font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;margin-bottom:20px;}
+footer ul{list-style:none;}
+footer ul li{margin-bottom:10px;}
+footer ul li a{color:rgba(255,255,255,.55);text-decoration:none;font-size:.88rem;transition:color .2s;}
+footer ul li a:hover{color:var(--sun2);}
+.footer-bottom{
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:.8rem;color:rgba(255,255,255,.25);
+}
+
+/* ===== SCROLL REVEAL ===== */
+.sr{opacity:0;transform:translateY(36px);transition:opacity .8s var(--ease-out),transform .8s var(--ease-out);}
+.sr.is-vis{opacity:1;transform:none;}
+.sr-d1{transition-delay:.1s;}
+.sr-d2{transition-delay:.2s;}
+.sr-d3{transition-delay:.3s;}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:960px){
+  .hero{grid-template-columns:1fr;}
+  .hero-right{display:none;}
+  .hero-left{padding:120px 6% 80px;}
+  .manifesto{grid-template-columns:1fr;gap:40px;}
+  .manifesto-label{position:static;}
+  .counters{grid-template-columns:repeat(2,1fr);}
+  .pilares-grid{grid-template-columns:1fr;}
+  .bento-item:nth-child(n){grid-column:span 12;grid-row:span 1;}
+  .footer-top{grid-template-columns:1fr 1fr;gap:40px;}
+  .nav-links{display:none;}
+  .footer-bottom{flex-direction:column;gap:12px;text-align:center;}
+}
+</style>
+</head>
+<body>
+
+<!-- Grain texture -->
+<div class="grain" aria-hidden="true"></div>
+
+<!-- Cursor -->
+<div id="cursor" aria-hidden="true"></div>
+<div id="cursor-ring" aria-hidden="true"></div>
+
+<!-- Progress bar -->
+<div id="prog" role="progressbar" aria-label="Progresso de leitura"></div>
+
+<!-- LIGHTBOX -->
+<div id="lb" role="dialog" aria-modal="true" aria-label="Visualizar imagem">
+  <button class="lb-close" id="lb-close" aria-label="Fechar">✕</button>
+  <button class="lb-nav" id="lb-prev" aria-label="Imagem anterior">‹</button>
+  <button class="lb-nav" id="lb-next" aria-label="Próxima imagem">›</button>
+  <img id="lb-img" src="" alt="">
+  <div class="lb-meta">
+    <h4 id="lb-title"></h4>
+    <p id="lb-fonte"></p>
+  </div>
+</div>
+
+<!-- ACESSIBILIDADE -->
+<button id="acc-toggle" aria-label="Abrir painel de acessibilidade" aria-expanded="false" onclick="toggleAcc()">♿</button>
+<div id="acc-panel" role="region" aria-label="Opções de acessibilidade">
+  <h3>Acessibilidade</h3>
+  <button class="acc-btn" onclick="toggleDark()"><span class="icon">🌙</span> Modo escuro</button>
+  <button class="acc-btn" onclick="toggleHC()"><span class="icon">◑</span> Alto contraste</button>
+  <button class="acc-btn" onclick="bigFont()"><span class="icon">A+</span> Fonte maior</button>
+  <button class="acc-btn" onclick="smallFont()"><span class="icon">A-</span> Fonte menor</button>
+  <button class="acc-btn" onclick="toggleDys()"><span class="icon">Dys</span> Fonte dislexia</button>
+  <button class="acc-btn" onclick="readPage()"><span class="icon">🔊</span> Ler a página</button>
+  <button class="acc-btn" onclick="stopRead()"><span class="icon">🔇</span> Parar leitura</button>
+</div>
+
+<!-- NAV -->
+<nav class="nav" role="navigation" aria-label="Menu principal">
+  <a href="#" class="nav-logo" aria-label="AgroFuturo - página inicial">
+    <span aria-hidden="true">🌿</span>
+    AgroFuturo
+  </a>
+  <ul class="nav-links" role="list">
+    <li><a href="#manifesto">Manifesto</a></li>
+    <li><a href="#galeria">Galeria</a></li>
+    <li><a href="#pilares">Pilares</a></li>
+    <li><a href="#historia">História</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" role="banner">
+  <svg class="hero-blob" viewBox="0 0 400 400" aria-hidden="true">
+    <path fill="var(--leaf)" d="M318.5 112.5Q357 225 318.5 312Q280 399 171 393Q62 387 31 281.5Q0 176 62.5 109Q125 42 225 32Q325 22 318.5 112.5Z"/>
+  </svg>
+
+  <div class="hero-left">
+    <div class="hero-tag" aria-label="Agronegócio sustentável">
+      <span class="dot" aria-hidden="true"></span>
+      Agronegócio Sustentável
+    </div>
+    <h1>
+      <strong>Agro</strong><br>
+      <em>forte &amp;</em><br>
+      futuro
+    </h1>
+    <p class="hero-desc">
+      O Brasil prova que é possível liderar a produção global de alimentos e ao mesmo tempo ser guardião das maiores biodiversidades do planeta.
+    </p>
+    <div class="hero-btns">
+      <a href="#manifesto" class="btn-main">Descobrir ↓</a>
+      <a href="#galeria" class="btn-ghost">Ver galeria</a>
+    </div>
+  </div>
+
+  <div class="hero-right" aria-hidden="true">
+    <div class="hero-img-wrap">
+      <img
+        src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=1400&q=85"
+        alt="Vista aérea de lavoura sustentável ao pôr do sol"
+        loading="eager">
+      <div class="hero-img-overlay"></div>
+    </div>
+    <div class="hero-stat">
+      <span class="num" data-target="100">100<span class="counter-unit">%</span></span>
+      <div class="label">do PIB brasileiro</div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap" aria-hidden="true">
+  <div class="marquee-track">
+    <span class="dot-sep">🌱 Produção responsável</span>
+    <span class="dot-sep">🌊 Gestão hídrica</span>
+    <span class="dot-sep">🌳 Preservação florestal</span>
+    <span class="dot-sep">☀️ Energia renovável</span>
+    <span class="dot-sep">🐝 Biodiversidade</span>
+    <span class="dot-sep">🔬 Biotecnologia</span>
+    <span class="dot-sep">🌎 Líder global</span>
+    <span class="dot-sep">🌱 Produção responsável</span>
+    <span class="dot-sep">🌊 Gestão hídrica</span>
+    <span class="dot-sep">🌳 Preservação florestal</span>
+    <span class="dot-sep">☀️ Energia renovável</span>
+    <span class="dot-sep">🐝 Biodiversidade</span>
+    <span class="dot-sep">🔬 Biotecnologia</span>
+    <span class="dot-sep">🌎 Líder global</span>
+  </div>
+</div>
+
+<!-- MANIFESTO -->
+<section id="manifesto" class="manifesto" role="region" aria-labelledby="h-manifesto">
+  <div class="manifesto-label sr">
+    <span>Nosso manifesto</span>
+    <h2 id="h-manifesto">O campo<br>que nutre<br>e preserva</h2>
+  </div>
+  <div class="manifesto-content">
+    <p class="sr">O Brasil é a única nação tropical capaz de alimentar o mundo — e também uma das mais ricas em florestas, rios e biodiversidade.</p>
+    <p class="sr sr-d1">Esse paradoxo não é uma contradição. É nossa <strong>maior vantagem competitiva</strong>: mostrar que é possível produzir mais por hectare, com menos impacto, conservando ecossistemas que o planeta inteiro depende.</p>
+    <p class="sr sr-d2">Com ciência, inovação e política pública alinhada, o agronegócio brasileiro pode ser o modelo que o século XXI precisa: um setor que alimenta nações <strong>sem destruir o futuro</strong>.</p>
+  </div>
+</section>
+
+<!-- COUNTERS -->
+<div class="counters" role="region" aria-label="Dados do agronegócio sustentável">
+  <div class="counter-item">
+    <span class="counter-num" data-target="26" data-suffix="%">0%</span>
+    <div class="counter-label">do PIB nacional</div>
+  </div>
+  <div class="counter-item">
+    <span class="counter-num" data-target="66" data-suffix="%">0%</span>
+    <div class="counter-label">do território preservado</div>
+  </div>
+  <div class="counter-item">
+    <span class="counter-num" data-target="220" data-suffix="M">0M</span>
+    <div class="counter-label">hectares cultivados</div>
+  </div>
+  <div class="counter-item">
+    <span class="counter-num" data-target="180" data-suffix="+">0+</span>
+    <div class="counter-label">países abastecidos</div>
+  </div>
+</div>
+
+<!-- GALERIA BENTO -->
+<section id="galeria" class="galeria" role="region" aria-labelledby="h-galeria">
+  <div class="galeria-header sr">
+    <div>
+      <h2 id="h-galeria">Campo<br><em>em imagens</em></h2>
+    </div>
+    <p class="galeria-sub">Clique em qualquer foto para ampliar. Todas as imagens possuem fonte e crédito.</p>
+  </div>
+
+  <div class="bento" role="list">
+
+    <div class="bento-item sr" role="listitem"
+         data-title="Agricultura de precisão ao entardecer"
+         data-fonte='Foto: <a href="https://unsplash.com/photos/field-of-green-grass-during-sunset-Qe0T5CNpCPM" target="_blank" rel="noopener">James Baltz / Unsplash</a>'
+         onclick="openLb(this)">
+      <span class="bento-tag">Lavoura</span>
+      <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800&q=85"
+           alt="Lavoura de grãos ao entardecer com maquinário moderno" loading="lazy">
+      <div class="bento-info">
+        <h4>Agricultura de precisão ao entardecer</h4>
+        <p class="bento-fonte">📷 <a href="https://unsplash.com" target="_blank" rel="noopener">James Baltz / Unsplash</a></p>
+      </div>
+    </div>
+
+    <div class="bento-item sr sr-d1" role="listitem"
+         data-title="Campo de trigo dourado"
+         data-fonte='Foto: <a href="https://unsplash.com/photos/brown-wheat-field-during-daytime-Qe0T5CNpCPM" target="_blank" rel="noopener">Gabriel Jimenez / Unsplash</a>'
+         onclick="openLb(this)">
+      <span class="bento-tag">Grãos</span>
+      <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=85"
+           alt="Campo de trigo dourado ao pôr do sol" loading="lazy">
+      <div class="bento-info">
+        <h4>Campo de trigo dourado</h4>
+        <p class="bento-fonte">📷 <a href="https://unsplash.com" target="_blank" rel="noopener">Gabriel Jimenez / Unsplash</a></p>
+      </div>
+    </div>
+
+    <div class="bento-item sr sr-d2" role="listitem"
+         data-title="Flores silvestres em área preservada"
+         data-fonte='Foto: <a href="https://unsplash.com" target="_blank" rel="noopener">Jeremy Bishop / Unsplash</a>'
+         onclick="openLb(this)">
+      <span class="bento-tag">Biodiversidade</span>
+      <img src="https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?w=800&q=85"
+           alt="Flores silvestres coloridas em campo verde" loading="lazy">
+      <div class="bento-info">
+        <h4>Flores silvestres em área preservada</h4>
+        <p class="bento-fonte">📷 <a href="https://unsplash.com" target="_blank" rel="noopener">Jeremy Bishop / Unsplash</a></p>
+      </div>
+    </div>
+
+    <div class="bento-item sr sr-d1" role="listitem"
+         data-title="Energia solar em propriedade rural"
+         data-fonte='Foto: <a href="https://unsplash.com" target="_blank" rel="noopener">Federico Respini / Unsplash</a>'
+         onclick="openLb(this)">
+      <span class="bento-tag">Energia limpa</span>
+      <img src="https://images.unsplash.com/photo-1560493676-04071c5f467b?w=800&q=85"
+           alt="Painéis solares instalados em fazenda ao lado de plantação" loading="lazy">
+      <div class="bento-info">
+        <h4>Energia solar em propriedade rural</h4>
+        <p class="bento-fonte">📷 <a href="https://unsplash.com" target="_blank" rel="noopener">Federico Respini / Unsplash</a></p>
+      </div>
+    </div>
+
+    <div class="bento-item sr sr-d3" role="listitem"
+         data-title="Agricultura familiar orgânica"
+         data-fonte='Foto: <a href="https://unsplash.com" target="_blank" rel="noopener">Elaine Casap / Unsplash</a>'
+         onclick="openLb(this)">
+      <span class="bento-tag">Familiar</span>
+      <img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=85"
+           alt="Mãos colhendo frutas orgânicas em horta familiar" loading="lazy">
+      <div class="bento-info">
+        <h4>Agricultura familiar orgânica</h4>
+        <p class="bento-fonte">📷 <a href="https://unsplash.com" target="_blank" rel="noopener">Elaine Casap / Unsplash</a></p>
+      </div>
+    </div>
+
+    <div class="bento-item sr sr-d2" role="listitem"
+         data-title="Plantação de soja com tecnologia"
+         data-fonte='Foto: <a href="https://unsplash.com" target="_blank" rel="noopener">Unsplash / CC0</a>'
+         onclick="openLb(this)">
+      <span class="bento-tag">Tecnologia</span>
+      <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&q=85"
+           alt="Plantação de soja verde com horizonte ao fundo" loading="lazy">
+      <div class="bento-info">
+        <h4>Plantação de soja com tecnologia</h4>
+        <p class="bento-fonte">📷 <a href="https://unsplash.com" target="_blank" rel="noopener">Unsplash / CC0</a></p>
+      </div>
+    </div>
+
+    <div class="bento-item sr sr-d3" role="listitem"
+         data-title="Rio limpo em área rural preservada"
+         data-fonte='Foto: <a href="https://unsplash.com" target="_blank" rel="noopener">Meriç Dağlı / Unsplash</a>'
+         onclick="openLb(this)">
+      <span class="bento-tag">Recursos hídricos</span>
+       <img src="https://cptstatic.s3.amazonaws.com/imagens/enviadas/materias/materia8172/nascentes-importancia-processo-de-recuperacao-e-conservacao-da-agua-cpt11.jpg"
+         alt="Rio cristalino fluindo entre margens com vegetação nativa densa; cenário rural preservado ao redor, céu claro; transmite tranquilidade" loading="lazy">
+      <div class="bento-info">
+        <h4>Rio limpo em área rural preservada</h4>
+        <p class="bento-fonte">📷 <a href="https://www.cpt.com.br/cursos-meioambiente/artigos/nascentes-importancia-processo-de-recuperacao-e-conservacao-da-agua" target="_blank" rel="noopener">Meriç Dağlı / Unsplash</a></p>
+      </div>
+    </div>
+
+  </div>
+  <p style="text-align:center;margin-top:28px;font-size:.8rem;color:var(--ink);opacity:.4;">
+    Todas as imagens são provenientes do <a href="https://unsplash.com" target="_blank" rel="noopener" style="color:var(--leaf);">Unsplash</a> sob licença livre para uso educacional e não comercial.
+  </p>
+</section>
+
+<!-- PILARES -->
+<section id="pilares" class="pilares" role="region" aria-labelledby="h-pilares">
+  <div class="pilares-header sr">
+    <h2 id="h-pilares">Os pilares do agro sustentável</h2>
+    <p>Seis frentes que definem o equilíbrio entre produtividade e responsabilidade ambiental no campo brasileiro.</p>
+  </div>
+  <div class="pilares-grid">
+
+    <div class="pilar-card sr">
+      <div class="pilar-icon" aria-hidden="true">🌿</div>
+      <div class="pilar-num" aria-hidden="true">01</div>
+      <h3>Agricultura de baixo carbono</h3>
+      <p>Integração lavoura-pecuária-floresta (ILPF) reduz emissões de CO₂, recupera pastagens degradadas e aumenta a produtividade por hectare.</p>
+    </div>
+
+    <div class="pilar-card sr sr-d1">
+      <div class="pilar-icon" aria-hidden="true">💧</div>
+      <div class="pilar-num" aria-hidden="true">02</div>
+      <h3>Gestão inteligente da água</h3>
+      <p>Irrigação de precisão, recuperação de matas ciliares e nascentes garantem produção abundante sem desperdiçar o recurso mais precioso do campo.</p>
+    </div>
+
+    <div class="pilar-card sr sr-d2">
+      <div class="pilar-icon" aria-hidden="true">🔬</div>
+      <div class="pilar-num" aria-hidden="true">03</div>
+      <h3>Biotecnologia e inovação</h3>
+      <p>A Embrapa e startups agro desenvolvem sementes tolerantes ao calor, bioinsumos e técnicas regenerativas que reduzem o uso de agroquímicos.</p>
+    </div>
+
+    <div class="pilar-card sr">
+      <div class="pilar-icon" aria-hidden="true">☀️</div>
+      <div class="pilar-num" aria-hidden="true">04</div>
+      <h3>Energia renovável no campo</h3>
+      <p>Etanol de cana-de-açúcar, biogás de dejetos animais e painéis solares tornam propriedades rurais geradoras de energia limpa.</p>
+    </div>
+
+    <div class="pilar-card sr sr-d1">
+      <div class="pilar-icon" aria-hidden="true">🐝</div>
+      <div class="pilar-num" aria-hidden="true">05</div>
+      <h3>Preservação da biodiversidade</h3>
+      <p>O Código Florestal garante reservas legais e APPs. Corredores ecológicos conectam fragmentos florestais e protegem polinizadores essenciais.</p>
+    </div>
+
+    <div class="pilar-card sr sr-d2">
+      <div class="pilar-icon" aria-hidden="true">🤝</div>
+      <div class="pilar-num" aria-hidden="true">06</div>
+      <h3>Agricultura familiar</h3>
+      <p>70% dos alimentos consumidos no Brasil vêm de pequenas propriedades. O fortalecimento da agricultura familiar é central para a soberania alimentar.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section id="historia" class="timeline-sec" role="region" aria-labelledby="h-tl">
+  <h2 class="sr" id="h-tl">A jornada <em>sustentável</em></h2>
+  <div class="tl" role="list">
+
+    <div class="tl-item" role="listitem">
+      <div class="tl-year">1973</div>
+      <h4>Criação da Embrapa</h4>
+      <p>A Empresa Brasileira de Pesquisa Agropecuária é fundada para desenvolver soluções tecnológicas que transformaram o Cerrado no maior celeiro tropical do mundo.</p>
+    </div>
+
+    <div class="tl-item" role="listitem">
+      <div class="tl-year">1988</div>
+      <h4>Constituição Federal e meio ambiente</h4>
+      <p>O artigo 225 da Constituição de 1988 garante a todos o direito ao meio ambiente ecologicamente equilibrado, estabelecendo bases legais para a legislação ambiental rural.</p>
+    </div>
+
+    <div class="tl-item" role="listitem">
+      <div class="tl-year">2003</div>
+      <h4>Plano ABC — Agricultura de Baixo Carbono</h4>
+      <p>O programa federal financia práticas agropecuárias sustentáveis que reduzem a emissão de gases de efeito estufa, como o plantio direto e a recuperação de pastagens.</p>
+    </div>
+
+    <div class="tl-item" role="listitem">
+      <div class="tl-year">2012</div>
+      <h4>Novo Código Florestal</h4>
+      <p>Modernização da legislação cria o Cadastro Ambiental Rural (CAR), ferramenta digital para monitorar e regularizar as propriedades rurais brasileiras.</p>
+    </div>
+
+    <div class="tl-item" role="listitem">
+      <div class="tl-year">2023</div>
+      <h4>Brasil no centro das negociações climáticas</h4>
+      <p>O país assume papel central na COP28 com meta de desmatamento zero e restauração de 12 milhões de hectares de florestas degradadas até 2030.</p>
+    </div>
+
+    <div class="tl-item" role="listitem">
+      <div class="tl-year">2025 →</div>
+      <h4>COP30 em Belém e o protagonismo brasileiro</h4>
+      <p>O Brasil sedia a COP30 na Amazônia e lidera o debate global sobre como conciliar segurança alimentar, redução de emissões e proteção da biodiversidade.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta" role="complementary">
+  <div class="cta-inner sr">
+    <h2>O futuro<br>nasce no campo.</h2>
+    <p>Cada escolha de consumo, cada política pública e cada inovação tecnológica pode aproximar o Brasil de um modelo agrícola que o mundo inteiro vai seguir.</p>
+    <a href="#manifesto" class="btn-white">Ler o manifesto</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer role="contentinfo">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="logo">
+        <span aria-hidden="true">🌿</span>
+        AgroFuturo
+      </div>
+      <p>Site educativo sobre sustentabilidade no agronegócio brasileiro. Conteúdo com fins didáticos.</p>
+    </div>
+    <div>
+      <h5>Fontes de dados</h5>
+      <ul>
+        <li><a href="https://www.embrapa.br" target="_blank" rel="noopener">Embrapa</a></li>
+        <li><a href="https://www.cnabrasil.org.br" target="_blank" rel="noopener">CNA Brasil</a></li>
+        <li><a href="https://www.ibge.gov.br" target="_blank" rel="noopener">IBGE</a></li>
+        <li><a href="https://www.mapa.gov.br" target="_blank" rel="noopener">MAPA</a></li>
+        <li><a href="https://www.inpe.br" target="_blank" rel="noopener">INPE</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Imagens</h5>
+      <ul>
+        <li><a href="https://unsplash.com/@jamesbaltz" target="_blank" rel="noopener">James Baltz / Unsplash</a></li>
+        <li><a href="https://unsplash.com/@gabrielj_photography" target="_blank" rel="noopener">G. Jimenez / Unsplash</a></li>
+        <li><a href="https://unsplash.com/@jeremybishop" target="_blank" rel="noopener">Jeremy Bishop / Unsplash</a></li>
+        <li><a href="https://unsplash.com/@federespini" target="_blank" rel="noopener">F. Respini / Unsplash</a></li>
+        <li><a href="https://unsplash.com/@elainecasap" target="_blank" rel="noopener">Elaine Casap / Unsplash</a></li>
+        <li><a href="https://unsplash.com/@meric" target="_blank" rel="noopener">Meriç Dağlı / Unsplash</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Temas</h5>
+      <ul>
+        <li><a href="#manifesto">Manifesto</a></li>
+        <li><a href="#galeria">Galeria</a></li>
+        <li><a href="#pilares">Pilares</a></li>
+        <li><a href="#historia">História</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 AgroFuturo — Site educacional</span>
+    <span>criado pela professora de IA Kayla Muller</span>
+    <span>Imagens: <a href="https://unsplash.com" target="_blank" rel="noopener" style="color:rgba(255,255,255,.35);">Unsplash</a> · Licença livre</span>
+  </div>
+</footer>
+
+<script>
+/* ===== CURSOR ===== */
+const cur=document.getElementById('cursor'),ring=document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function animRing(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;ring.style.left=Math.round(rx)+'px';ring.style.top=Math.round(ry)+'px';requestAnimationFrame(animRing);})();
+document.querySelectorAll('a,button,.bento-item,.pilar-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cur.style.width='24px';cur.style.height='24px';ring.style.width='60px';ring.style.height='60px';ring.style.opacity='0.3';});
+  el.addEventListener('mouseleave',()=>{cur.style.width='12px';cur.style.height='12px';ring.style.width='40px';ring.style.height='40px';ring.style.opacity='0.5';});
+});
+
+/* ===== PROGRESS BAR ===== */
+window.addEventListener('scroll',()=>{
+  const p=document.getElementById('prog');
+  const h=document.documentElement;
+  p.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';
+  document.querySelector('.nav').classList.toggle('scrolled',window.scrollY>60);
+});
+
+/* ===== INTERSECTION OBSERVER ===== */
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('is-vis');io.unobserve(e.target);}});
+},{threshold:.12});
+document.querySelectorAll('.sr,.tl-item,.counter-item').forEach(el=>io.observe(el));
+
+/* ===== CONTADORES ANIMADOS ===== */
+function animCount(el){
+  const target=+el.dataset.target,suffix=el.dataset.suffix||'';
+  let start=0;
+  const dur=1800,step=target/(dur/16);
+  const t=setInterval(()=>{
+    start=Math.min(start+step,target);
+    el.textContent=Math.floor(start)+suffix;
+    if(start>=target)clearInterval(t);
+  },16);
+}
+const cntObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const n=e.target.querySelector('[data-target]');
+      if(n)animCount(n);
+      cntObs.unobserve(e.target);
+    }
+  });
+},{threshold:.5});
+document.querySelectorAll('.counter-item').forEach(el=>cntObs.observe(el));
+
+/* ===== LIGHTBOX ===== */
+const photos=[...document.querySelectorAll('.bento-item')];
+let cur_idx=0;
+function openLb(el){
+  cur_idx=photos.indexOf(el);
+  updateLb();
+  document.getElementById('lb').classList.add('on');
+  document.body.style.overflow='hidden';
+}
+function updateLb(){
+  const el=photos[cur_idx];
+  const img=el.querySelector('img');
+  document.getElementById('lb-img').src=img.src.replace('w=800','w=1400');
+  document.getElementById('lb-img').alt=img.alt;
+  document.getElementById('lb-title').textContent=el.dataset.title||'';
+  document.getElementById('lb-fonte').innerHTML=el.dataset.fonte||'';
+}
+document.getElementById('lb-close').onclick=()=>{document.getElementById('lb').classList.remove('on');document.body.style.overflow='';};
+document.getElementById('lb-prev').onclick=()=>{cur_idx=(cur_idx-1+photos.length)%photos.length;updateLb();};
+document.getElementById('lb-next').onclick=()=>{cur_idx=(cur_idx+1)%photos.length;updateLb();};
+document.getElementById('lb').addEventListener('click',function(e){if(e.target===this){this.classList.remove('on');document.body.style.overflow='';}});
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('lb').classList.contains('on'))return;
+  if(e.key==='Escape'){document.getElementById('lb').classList.remove('on');document.body.style.overflow='';}
+  if(e.key==='ArrowLeft'){cur_idx=(cur_idx-1+photos.length)%photos.length;updateLb();}
+  if(e.key==='ArrowRight'){cur_idx=(cur_idx+1)%photos.length;updateLb();}
+});
+
+/* ===== ACESSIBILIDADE ===== */
+let accOpen=false;
+function toggleAcc(){
+  accOpen=!accOpen;
+  document.getElementById('acc-panel').classList.toggle('open',accOpen);
+  document.getElementById('acc-toggle').setAttribute('aria-expanded',accOpen);
+}
+function toggleDark(){document.body.classList.toggle('dark');}
+function toggleHC(){document.body.classList.toggle('hc');}
+let fs=1;
+function bigFont(){fs=Math.min(fs+.15,1.6);document.documentElement.style.setProperty('--fs',fs);}
+function smallFont(){fs=Math.max(fs-.15,.7);document.documentElement.style.setProperty('--fs',fs);}
+function toggleDys(){document.body.classList.toggle('dyslexia');}
+function readPage(){
+  if(!window.speechSynthesis)return;
+  const u=new SpeechSynthesisUtterance(document.body.innerText.slice(0,4000));
+  u.lang='pt-BR';u.rate=.88;
+  window.speechSynthesis.speak(u);
+}
+function stopRead(){window.speechSynthesis&&window.speechSynthesis.cancel();}
+
+/* ===== PARALLAX SUAVE HERO BLOB ===== */
+document.addEventListener('mousemove',e=>{
+  const blob=document.querySelector('.hero-blob');
+  if(!blob)return;
+  const x=(e.clientX/window.innerWidth-.5)*18;
+  const y=(e.clientY/window.innerHeight-.5)*12;
+  blob.style.transform=`translate(${x}px,${y}px)`;
+});
+</script>
+</body>
+</html>
